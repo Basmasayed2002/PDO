@@ -1,10 +1,10 @@
 <?php
 require_once "../Includes/db.php";  
-require_once "product.php";  
+require_once "../Includes/Product.php";  
 
 $db = new DB();  
-$product = new Product($db);  
-
+$productModel = new Product($db);  
+$producten = $productModel->selectAllProducts();
 ?>
 
 <!DOCTYPE html>
@@ -12,29 +12,25 @@ $product = new Product($db);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Overzicht</title>
+    <title>Producten</title>
 </head>
 <body>
 <table>
-  <tr>
-    <th>Product Code</th>
-    <th>Naam</th>
-    <th>Prijs</th>
-    <th colspan="2">Acties</th>
-  </tr>
-  
-  <?php
-  $producten = $product->selectAllProducts();
-  foreach ($producten as $product) {
-    echo "<tr>";
-    echo "<td>" . (isset($product['id']) ? $product['id'] : 'N/A') . "</td>"; // Check of id bestaat
-    echo "<td>" . (isset($product['naam']) ? $product['naam'] : 'N/A') . "</td>"; // Check of naam bestaat
-    echo "<td>" . (isset($product['prijs']) ? $product['prijs'] : 'N/A') . "</td>"; // Check of prijs bestaat
-    echo "<td><a href='product-delete.php?id=" . $product['id'] . "'>Verwijderen</a></td>";
-    echo "<td><a href='product-edit.php?id=" . $product['id'] . "'>Bewerken</a></td>";
-    echo "</tr>";
-  }
-  ?>
+    <tr>
+        <th>Product Code</th>
+        <th>Naam</th>
+        <th>Prijs</th>
+        <th colspan="2">Acties</th>
+    </tr>
+    <?php foreach ($producten as $product): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($product['id']); ?></td>
+            <td><?php echo htmlspecialchars($product['omschrijving']); ?></td>
+            <td><?php echo htmlspecialchars($product['prijs']); ?></td>
+            <td><a href='product-delete.php?id=<?php echo $product['id']; ?>'>Verwijderen</a></td>
+            <td><a href='product-edit.php?id=<?php echo $product['id']; ?>'>Bewerken</a></td>
+        </tr>
+    <?php endforeach; ?>
 </table>
 </body>
 </html>
