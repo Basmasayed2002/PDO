@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $naam = $_POST['naam'];  
     $prijsPerStuk = $_POST['prijsPerStuk'];
     
-    // Foto uploaden
+    
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
         if (!is_dir('uploads')) {
             mkdir('uploads', 0777, true); 
@@ -22,13 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $foto = null;
     }
 
-    // SQL query aanpassen naar 'naam' in plaats van 'omschrijving'
-    $sql = "INSERT INTO product (naam, foto, prijs) VALUES (:naam, :foto, :prijsPerStuk)";
+    $sql = "INSERT INTO product (omschrijving, foto, prijs) VALUES (:omschrijving, :foto, :prijsPerStuk)";
     
     // Gebruik de execute methode van de DB klasse
     try {
         $db->execute($sql, [
-            ':naam' => $naam,
+            ':omschrijving' => $omschrijving,
             ':foto' => $foto,
             ':prijsPerStuk' => $prijsPerStuk
         ]);

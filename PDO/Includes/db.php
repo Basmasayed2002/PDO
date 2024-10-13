@@ -1,33 +1,32 @@
 <?php
-
 class DB {
-    private $db;
+    private $host = 'localhost'; 
+    private $dbname = 'pdo'; 
+    private $username = 'root'; 
+    private $password = ''; 
+    public $pdo; 
 
-    public function __construct($db = "pdo", $user = "root", $password = "", $host = "localhost") {
+    public function __construct() {
         try {
-            $this->db = new PDO("mysql:host=$host;dbname=$db", $user, $password);
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
-        }
-    }
-
-    public function execute($sql, $placeholders = null) {
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($placeholders);
-            return $stmt;
+            
+            $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->username, $this->password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            echo "SQL Error: " . $e->getMessage();
+            echo "Verbinding met de database mislukt: " . $e->getMessage();
         }
     }
 
-    public function selectAllProducts() {
-        $stmt = $this->execute("SELECT * FROM product");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function execute($sql, $params = []) {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
+    }
+
+    public function deleteProduct($id) {
+        $sql = "DELETE FROM product WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
     }
 }
-
-
-// $db = new DB();
 ?>
