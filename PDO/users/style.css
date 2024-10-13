@@ -1,0 +1,83 @@
+/* Reset some default styles */
+body, h1, h2, p {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container for form */
+.container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin: 10px 0 5px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="file"],
+input[type="submit"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Submit button */
+input[type="submit"] {
+    background-color: #5cb85c; /* Groene achtergrond */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #4cae4c; /* Donkerder groen bij hover */
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Error message */
+.error {
+    color: red;
+    margin-bottom: 10px;
+}
+
+/* Linkstijl */
+a {
+    color: #007bff; /* Blauw voor links */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline; /* Onderstreping bij hover */
+}
+
+/* Extra styling voor het registreren en inloggen */
+p {
+    text-align: center;
+}
