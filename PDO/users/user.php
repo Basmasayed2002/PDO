@@ -1,60 +1,45 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-require_once "../Includes/db.php"; // Zorg ervoor dat dit het juiste pad is
+require_once "../Includes/db.php"; 
 
 class User {
-    private $db;
+    private $pdo;
 
     public function __construct(DB $db) {
-        $this->db = $db->getConnection(); // Zorg ervoor dat deze regel hier staat
+        $this->pdo = $db->pdo;
     }
 
-    public function login($usernameOrEmail, $password) {
-        $query = "SELECT * FROM users WHERE (username = :usernameOrEmail OR email = :usernameOrEmail)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':usernameOrEmail', $usernameOrEmail);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    public function register($username, $email, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        
+        $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+        
+        return $stmt->execute([$username, $email, $hashedPassword]);
+    }
 
+    
+    public function login($usernameOrEmail, $password) {
+        $sql = "SELECT * FROM users WHERE username = ? OR email = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$usernameOrEmail, $usernameOrEmail]);
+        
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($user && password_verify($password, $user['password'])) {
-            return $user; // Gebruiker gevonden en wachtwoord is correct
+            session_start();
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            return true; 
         }
-        return false; // Inloggen mislukt
+        
+        return false; // 
+    }
+
+    // Uitloggen
+    public function logout() {
+        session_start();
+        session_destroy();
     }
 }
-
-// Maak een User-object aan
-$userModel = new User(new DB());
-$user = $userModel->getUserById($_SESSION['user_id']);
-
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gebruikerspagina</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h2>Welkom, <?php echo htmlspecialchars($user['username']); ?></h2>
-        <nav>
-            <ul>
-                <li><a href="user.php">Home</a></li>
-                <li><a href="logout.php">Uitloggen</a></li>
-            </ul>
-        </nav>
-        <p>Dit is je gebruikerspagina. Hier kun je meer informatie over je account bekijken.</p>
-    </div>
-</body>
-</html>
